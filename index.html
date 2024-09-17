@@ -68,15 +68,8 @@
 
         powerButton.addEventListener('click', () => {
             // Faz uma requisição HTTP para o servidor quando o botão for clicado
-            fetch('http://esp32nycolas.ddns.net:3000/event/pulse')
+            fetch('https://esp32-api.vercel.app:3000/event/pulse')
                 .then(response => {
-                    if (response.ok) {
-                        // Se a requisição for bem-sucedida
-                        statusMessage.textContent = "Comando enviado com sucesso!";
-                    } else {
-                        // Se houver um erro na requisição
-                        statusMessage.textContent = "Erro ao enviar comando!";
-                    }
                 })
                 .catch(error => {
                     // Se houver um erro de rede
