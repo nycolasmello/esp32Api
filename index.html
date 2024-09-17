@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Botão Power</title>
+    <title>ESP32 Nycolas</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
@@ -12,11 +12,21 @@
         /* Estilo básico para centralizar a página */
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Frase centralizada */
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         /* Estilo do botão de power */
@@ -50,9 +60,22 @@
             font-size: 20px;
             color: #333;
         }
+
+        /* Texto de rodapé */
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            text-align: center;
+            width: 100%;
+            font-size: 14px;
+            color: #555;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Frase centralizada -->
+    <div class="title">Sistema de automação para portão</div>
 
     <!-- Botão com ícone de Power -->
     <button class="power-button" id="powerButton">
@@ -62,13 +85,18 @@
     <!-- Mensagem de status -->
     <div class="status-message" id="statusMessage"></div>
 
+    <!-- Rodapé -->
+    <div class="footer">
+        Criado e desenvolvido por Nycolas Mello
+    </div>
+
     <script>
         const powerButton = document.getElementById('powerButton');
         const statusMessage = document.getElementById('statusMessage');
 
         powerButton.addEventListener('click', () => {
             // Faz uma requisição HTTP para o servidor quando o botão for clicado
-            fetch('https://esp32-api.vercel.app:3000/event/pulse')
+            fetch('https://esp32-api.vercel.app/event/pulse')
                 .then(response => {
                 })
                 .catch(error => {
