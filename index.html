@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Botão Power</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <style>
+        /* Estilo básico para centralizar a página */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        /* Estilo do botão de power */
+        .power-button {
+            width: 100px;
+            height: 100px;
+            background-color: #007bff; /* Azul */
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-decoration: none; /* Remove o sublinhado do link */
+        }
+
+        .power-button:active {
+            transform: scale(0.95); /* Efeito de clique */
+        }
+
+        .power-icon {
+            font-size: 40px;
+            color: white;
+        }
+
+        /* Estilo de texto no botão */
+        .status-message {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Botão com ícone de Power -->
+    <button class="power-button" id="powerButton">
+        <i class="fa-solid fa-power-off power-icon"></i>
+    </button>
+
+    <!-- Mensagem de status -->
+    <div class="status-message" id="statusMessage"></div>
+
+    <script>
+        const powerButton = document.getElementById('powerButton');
+        const statusMessage = document.getElementById('statusMessage');
+
+        powerButton.addEventListener('click', () => {
+            // Faz uma requisição HTTP para o servidor quando o botão for clicado
+            fetch('http://esp32nycolas.ddns.net:3000/event/pulse')
+                .then(response => {
+                    if (response.ok) {
+                        // Se a requisição for bem-sucedida
+                        statusMessage.textContent = "Comando enviado com sucesso!";
+                    } else {
+                        // Se houver um erro na requisição
+                        statusMessage.textContent = "Erro ao enviar comando!";
+                    }
+                })
+                .catch(error => {
+                    // Se houver um erro de rede
+                    statusMessage.textContent = "Falha na conexão!";
+                    console.error('Erro:', error);
+                });
+        });
+    </script>
+
+</body>
+</html>
