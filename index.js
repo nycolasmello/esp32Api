@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { Pool } = require('pg');
 const path = require('path');
 const app = express();
 
@@ -8,6 +9,22 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 let clients = [];
+
+const pool = new Pool({
+  user: 'postgres',
+  host: 'junction.proxy.rlwy.net',
+  database: 'railway',
+  password: 'clHyahvXXtujBGXGqmCZbNunPaNXDrUz',
+  port: 52114, // Porta padrão do PostgreSQL
+});
+
+pool.connect((err, client, release) => {
+  if (err) {
+    return console.error('Erro adquirindo cliente do pool', err.stack);
+  }
+  console.log('Conectado ao banco de dados PostgreSQL');
+  release();
+});
 
 app.get('/status', (request, response) => response.json({clients: clients.length,input}));
 
@@ -49,7 +66,40 @@ function eventsHandler(request, response, next) {
     sendEventsToAll(request.params.event);
     return response.json();
   }
-  
+  // Endpoint de login
+app.post('/login', async (req, res) => {
+  const { login, password } = req.body;
+
+  try {
+    // Consulta ao banco de dados
+    const query = 'SELECT * FROM tb_users WHERE login = $1';
+    const values = [login];
+
+    const result = await pool.query(query, values);
+
+    if (result.rows.length === 0) {
+      // Usuário não encontrado
+      return res.status(401).json({ error: 'Usuário ou senha incorretos' });
+    }
+
+    const user = result.rows[0];
+
+    // Verificar a senha
+    const match = await bcrypt.compare(password, user.senha);
+
+    if (match) {
+      // Senha correta
+      return res.json({ success: true });
+    } else {
+      // Senha incorreta
+      return res.status(401).json({ error: 'Usuário ou senha incorretos' });
+    }
+  } catch (err) {
+    console.error('Erro ao consultar o banco de dados', err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
   
   app.get('/event/:event', sendEvent);
   app.get('/',function(req,res){res.sendFile(path.join(__dirname+'/index.html'))});
