@@ -1,39 +1,89 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+    <!-- Cabeçalho original -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>ESP32 Nycolas</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
+    <title>ESP32 Nycolas - Login</title>
+
+    <!-- Inclua o CSS do Font Awesome e outros estilos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
-        /* Estilo básico para centralizar a página */
+        /* Estilos existentes */
         body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
             font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
         }
 
-        /* Frase centralizada */
-        .title {
-            font-size: 24px;
-            font-weight: bold;
+        /* Estilo para o formulário de login */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .login-form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-form h2 {
             margin-bottom: 20px;
             text-align: center;
         }
 
-        /* Estilo do botão de power */
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            /* Azul */
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .login-form button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Esconde o conteúdo principal inicialmente */
+        #mainContent {
+            display: none;
+        }
+
+        /* Estilos para o conteúdo principal */
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
         .power-button {
             width: 100px;
             height: 100px;
-            background-color: #007bff; /* Azul */
+            background-color: #007bff;
             border: none;
             border-radius: 50%;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -42,11 +92,12 @@
             align-items: center;
             cursor: pointer;
             transition: transform 0.3s;
-            text-decoration: none; /* Remove o sublinhado do link */
+            text-decoration: none;
+            margin: 0 auto;
         }
 
         .power-button:active {
-            transform: scale(0.95); /* Efeito de clique */
+            transform: scale(0.95);
         }
 
         .power-icon {
@@ -54,14 +105,13 @@
             color: white;
         }
 
-        /* Estilo de texto no botão */
         .status-message {
             margin-top: 20px;
             font-size: 20px;
             color: #333;
+            text-align: center;
         }
 
-        /* Texto de rodapé */
         .footer {
             position: absolute;
             bottom: 10px;
@@ -70,34 +120,176 @@
             font-size: 14px;
             color: #555;
         }
+
+        /* Estilo para o botão de logout */
+        .logout-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545;
+            /* Vermelho */
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+
+        /* Estilo para o slider */
+        .slider-container {
+            margin: 20px auto;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .slider {
+            width: 100%;
+        }
+
+        .slider-value {
+            margin-top: 10px;
+            font-size: 18px;
+        }
     </style>
 </head>
+
 <body>
 
-    <!-- Frase centralizada -->
-    <div class="title">Sistema de automação para portão</div>
+    <!-- Formulário de Login -->
+    <div class="login-container" id="loginContainer">
+        <form class="login-form" id="loginForm">
+            <h2>Login</h2>
+            <input type="text" id="login" placeholder="Usuário" required>
+            <input type="password" id="password" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
 
-    <!-- Botão com ícone de Power -->
-    <button class="power-button" id="powerButton">
-        <i class="fa-solid fa-power-off power-icon"></i>
-    </button>
+    <!-- Conteúdo Principal -->
+    <div id="mainContent">
+        <!-- Botão de Logout -->
+        <button class="logout-button" id="logoutButton">Logout</button>
 
-    <!-- Mensagem de status -->
-    <div class="status-message" id="statusMessage"></div>
+        <!-- Frase centralizada -->
+        <div class="title">Sistema de automação para portão</div>
 
-    <!-- Rodapé -->
-    <div class="footer">
-        Criado e desenvolvido por Nycolas Mello
+        <!-- Slider -->
+        <div class="slider-container">
+            <input type="range" min="60" max="300" value="180" class="slider" id="valueSlider">
+            <div class="slider-value">Segundos para fechamento automático: <span id="sliderValueDisplay">180</span>
+            </div>
+        </div>
+
+        <!-- Botão com ícone de Power -->
+        <button class="power-button" id="powerButton">
+            <i class="fa-solid fa-power-off power-icon"></i>
+        </button>
+
+        <!-- Mensagem de status -->
+        <div class="status-message" id="statusMessage"></div>
+
+        <!-- Rodapé -->
+        <div class="footer">
+            Criado e desenvolvido por Nycolas Mello
+        </div>
     </div>
 
     <script>
+        // Função para verificar o estado de login ao carregar a página
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn === 'true') {
+                showMainContent();
+            } else {
+                showLoginForm();
+            }
+        }
+
+        // Mostra o conteúdo principal
+        function showMainContent() {
+            loginContainer.style.display = 'none';
+            mainContent.style.display = 'block';
+        }
+
+        // Mostra o formulário de login
+        function showLoginForm() {
+            loginContainer.style.display = 'flex';
+            mainContent.style.display = 'none';
+        }
+
+        // Funcionalidade de Login
+        const loginForm = document.getElementById('loginForm');
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContent = document.getElementById('mainContent');
+        const logoutButton = document.getElementById('logoutButton');
+
+        loginForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const usernameInput = document.getElementById('login').value;
+            const passwordInput = document.getElementById('password').value;
+
+            // Enviar as credenciais ao backend
+            fetch('https://esp32api-production.up.railway.app/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ login: usernameInput, password: passwordInput })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Armazena o estado de login no localStorage
+                        localStorage.setItem('isLoggedIn', 'true');
+                        showMainContent();
+                    } else {
+                        alert('Usuário ou senha incorretos!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao conectar ao servidor');
+                });
+        });
+
+
+        // Botão de Logout
+        logoutButton.addEventListener('click', function () {
+            // Remove o estado de login do localStorage
+            localStorage.removeItem('isLoggedIn');
+            showLoginForm();
+        });
+
+        // Verifica o estado de login ao carregar a página
+        window.addEventListener('load', function () {
+            checkLoginStatus();
+        });
+
+        // Funcionalidade existente do botão de energia
         const powerButton = document.getElementById('powerButton');
         const statusMessage = document.getElementById('statusMessage');
 
         powerButton.addEventListener('click', () => {
+            // Obter o valor atual do slider
+            const sliderValue = document.getElementById('valueSlider').value;
+
             // Faz uma requisição HTTP para o servidor quando o botão for clicado
-            fetch('https://esp32api-production.up.railway.app/event/pulse')
+            fetch('https://esp32api-production.up.railway.app/event/pulse', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ value: sliderValue })
+            })
                 .then(response => {
+                    statusMessage.textContent = "Comando enviado com sucesso!";
                 })
                 .catch(error => {
                     // Se houver um erro de rede
@@ -105,7 +297,16 @@
                     console.error('Erro:', error);
                 });
         });
+
+        // Atualizar o valor exibido do slider
+        const valueSlider = document.getElementById('valueSlider');
+        const sliderValueDisplay = document.getElementById('sliderValueDisplay');
+
+        valueSlider.addEventListener('input', function () {
+            sliderValueDisplay.textContent = this.value;
+        });
     </script>
 
 </body>
+
 </html>
