@@ -90,7 +90,7 @@ function eventsHandler(request, response, next) {
       console.log('Usuário encontrado:', user);
   
       // Verificar a senha
-      const match = await bcrypt.compare(password, user.senha);
+      const match = await bcrypt.compare(password, user.password);
       console.log('Resultado da comparação de senha:', match);
   
       if (match) {
