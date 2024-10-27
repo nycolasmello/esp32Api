@@ -156,6 +156,13 @@
             margin-top: 10px;
             font-size: 18px;
         }
+
+        .gate-state {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -185,7 +192,9 @@
             <div class="slider-value">Segundos para fechamento automático: <span id="sliderValueDisplay">180</span>
             </div>
         </div>
-
+        <div class="gate-state">
+            Estado do portão: <span id="gateStateDisplay">Desconhecido</span>
+        </div>
         <!-- Botão com ícone de Power -->
         <button class="power-button" id="powerButton">
             <i class="fa-solid fa-power-off power-icon"></i>
@@ -301,6 +310,27 @@
         // Atualizar o valor exibido do slider
         const valueSlider = document.getElementById('valueSlider');
         const sliderValueDisplay = document.getElementById('sliderValueDisplay');
+
+        function updateGateState() {
+            fetch('https://esp32api-production.up.railway.app/gate_state')
+                .then(response => response.json())
+                .then(data => {
+                    const gateStateDisplay = document.getElementById('gateStateDisplay');
+                    gateStateDisplay.textContent = data.state;
+                })
+                .catch(error => {
+                    console.error('Erro ao obter o estado do portão:', error);
+                });
+        }
+
+        // Chamar a função ao carregar a página e em intervalos regulares
+        window.addEventListener('load', function () {
+            // ... Código existente ...
+            updateGateState();
+        });
+
+        // Atualizar o estado do portão a cada 5 segundos
+        setInterval(updateGateState, 5000);
 
         valueSlider.addEventListener('input', function () {
             sliderValueDisplay.textContent = this.value;

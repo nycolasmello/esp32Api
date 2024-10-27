@@ -68,6 +68,52 @@ function eventsHandler(request, response, next) {
     sendEventsToAll(request.params.event);
     return response.json();
   }
+  app.post('/update_gate_state', async (req, res) => {
+    const { state } = req.body;
+    console.log('Estado do portão recebido:', state);
+  
+    // Validar o estado recebido
+    const validStates = ['fechado', 'em movimento', 'aberto', 'desconhecido'];
+    if (!validStates.includes(state)) {
+      return res.status(400).json({ error: 'Estado inválido do portão' });
+    }
+  
+    try {
+      // Atualiza ou insere o estado do portão no banco de dados
+      const result = await pool.query(
+        'UPDATE gate_state SET state = $1, updated_at = NOW() WHERE id = 1',
+        [state]
+      );
+  
+      // Se nenhuma linha foi atualizada, insere um novo registro
+      if (result.rowCount === 0) {
+        await pool.query(
+          'INSERT INTO gate_state (id, state, updated_at) VALUES (1, $1, NOW())',
+          [state]
+        );
+      }
+  
+      res.json({ success: true });
+    } catch (err) {
+      console.error('Erro ao atualizar o estado do portão', err);
+      res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  });
+  
+  // Rota GET /gate_state para obter o estado atual do portão
+  app.get('/gate_state', async (req, res) => {
+    try {
+      const result = await pool.query('SELECT state FROM gate_state WHERE id = 1');
+      if (result.rows.length > 0) {
+        res.json({ state: result.rows[0].state });
+      } else {
+        res.json({ state: 'desconhecido' });
+      }
+    } catch (err) {
+      console.error('Erro ao obter o estado do portão', err);
+      res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  });
 
   app.get('/slider', async (req, res) => {
     try {
