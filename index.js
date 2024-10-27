@@ -68,6 +68,47 @@ function eventsHandler(request, response, next) {
     sendEventsToAll(request.params.event);
     return response.json();
   }
+
+  app.get('/slider', async (req, res) => {
+    try {
+      const result = await pool.query('SELECT value FROM slider_settings WHERE id = 1');
+      if (result.rows.length > 0) {
+        res.json({ value: result.rows[0].value });
+      } else {
+        res.json({ value: null });
+      }
+    } catch (err) {
+      console.error('Erro ao obter o valor do slider', err);
+      res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  });
+  
+  // Rota POST /slider para atualizar o valor do slider
+  app.post('/slider', async (req, res) => {
+    const { value } = req.body;
+    console.log('Valor do slider recebido:', value);
+  
+    try {
+      // Atualiza o valor do slider no registro com id = 1
+      const result = await pool.query(
+        'UPDATE slider_settings SET value = $1 WHERE id = 1',
+        [value]
+      );
+  
+      // Se nenhuma linha foi atualizada, insere um novo registro
+      if (result.rowCount === 0) {
+        await pool.query(
+          'INSERT INTO slider_settings (id, value) VALUES (1, $1)',
+          [value]
+        );
+      }
+  
+      res.json({ success: true });
+    } catch (err) {
+      console.error('Erro ao atualizar o valor do slider', err);
+      res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  });
   // Endpoint de login
   app.post('/login', async (req, res) => {
     const { login, password } = req.body;
@@ -94,19 +135,22 @@ function eventsHandler(request, response, next) {
       console.log('Resultado da comparação de senha:', match);
   
       if (match) {
-        // Senha correta
-        return res.json({ success: true });
-      } else {
-        // Senha incorreta
+        // Recuperar dispositivos associados ao usuário
+        const devicesQuery = 'SELECT device_identifier FROM devices WHERE user_id = $1';
+        const devicesResult = await pool.query(devicesQuery, [user.id]);
+
+        const devices = devicesResult.rows.map(row => row.device_identifier);
+
+        // Incluir informações dos dispositivos na resposta
+        return res.json({ success: true, devices });
+    } else {
         return res.status(401).json({ error: 'Usuário ou senha incorretos' });
-      }
+    }
     } catch (err) {
       console.error('Erro ao consultar o banco de dados', err);
       res.status(500).json({ error: 'Erro interno do servidor' });
     }
   });
-  
-
   
   app.get('/event/:event', sendEvent);
   app.get('/',function(req,res){res.sendFile(path.join(__dirname+'/index.html'))});

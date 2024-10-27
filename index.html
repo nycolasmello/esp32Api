@@ -277,19 +277,19 @@
         const statusMessage = document.getElementById('statusMessage');
 
         powerButton.addEventListener('click', () => {
-            // Obter o valor atual do slider
-            const sliderValue = document.getElementById('valueSlider').value;
-
             // Faz uma requisição HTTP para o servidor quando o botão for clicado
             fetch('https://esp32api-production.up.railway.app/event/pulse', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ value: sliderValue })
+                }
             })
                 .then(response => {
-                    statusMessage.textContent = "Comando enviado com sucesso!";
+                    if (response.ok) {
+                        statusMessage.textContent = "Comando enviado com sucesso!";
+                    } else {
+                        statusMessage.textContent = "Erro ao enviar comando!";
+                    }
                 })
                 .catch(error => {
                     // Se houver um erro de rede
@@ -304,6 +304,53 @@
 
         valueSlider.addEventListener('input', function () {
             sliderValueDisplay.textContent = this.value;
+        });
+
+        valueSlider.addEventListener('change', function () {
+            const sliderValue = this.value;
+
+            fetch('https://esp32api-production.up.railway.app/slider', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ value: sliderValue })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        statusMessage.textContent = "Valor do slider salvo com sucesso!";
+                    } else {
+                        statusMessage.textContent = "Erro ao salvar o valor do slider!";
+                    }
+                })
+                .catch(error => {
+                    statusMessage.textContent = "Falha na conexão ao salvar o slider!";
+                    console.error('Erro:', error);
+                });
+        });
+
+        // Carregar o valor atual do slider ao carregar a página
+        window.addEventListener('load', function () {
+            // Verifica o estado de login
+            checkLoginStatus();
+
+            // Busca o valor atual do slider do backend
+            fetch('https://esp32api-production.up.railway.app/slider', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.value) {
+                        valueSlider.value = data.value;
+                        sliderValueDisplay.textContent = data.value;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar o valor do slider:', error);
+                });
         });
     </script>
 
