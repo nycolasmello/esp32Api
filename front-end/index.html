@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <!-- Cabeçalho original -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 Nycolas - Login</title>
+
+    <!-- Inclua o CSS do Font Awesome e outros estilos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Inclua a fonte do Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+    <!-- Formulário de Login -->
+    <div class="login-container" id="loginContainer">
+        <form class="login-form" id="loginForm">
+            <h2>Login</h2>
+            <input type="text" id="login" placeholder="Usuário" required>
+            <input type="password" id="password" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div id="mainContent">
+        <!-- Botão de Logout -->
+        <button class="logout-button" id="logoutButton">Logout</button>
+
+
+
+        <!-- Frase centralizada -->
+        <div class="title">Sistema de Automação para Portão</div>
+
+        <!-- Controle para segundos -->
+        <div class="control-container">
+            <!-- Slider -->
+            <input type="range" min="5" max="180" value="120" class="slider" id="valueSlider">
+            <!-- Caixa de entrada abaixo do slider -->
+            <input type="number" min="5" max="180" value="120" class="number-input" id="valueInput">
+            <div class="control-label">Segundos para fechamento automático: <span id="valueDisplay">120</span></div>
+        </div>
+
+        <!-- Caixa do estado do portão -->
+        <div class="gate-state-box">
+            Estado do portão: <span id="gateStateDisplay">Desconhecido</span>
+        </div>
+
+        <!-- Botão com ícone de Power -->
+        <button class="power-button" id="powerButton">
+            <i class="fa-solid fa-power-off power-icon"></i>
+        </button>
+        <!-- Balão de Notificação -->
+        <div id="notification"></div>
+        <!-- Rodapé -->
+        <div class="footer">
+            Criado e desenvolvido por Nycolas Mello
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
