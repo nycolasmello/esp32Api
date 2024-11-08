@@ -28,6 +28,13 @@ pool.connect((err, client, release) => {
   release();
 });
 
+app.use(express.static('front-end'));
+
+// Rota padrão para servir o HTML
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname, '/front-end/index.html'));
+});
+
 app.get('/status', (request, response) => response.json({clients: clients.length,input}));
 
 const PORT = 3000;
