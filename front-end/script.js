@@ -26,7 +26,8 @@
     const mainContent = document.getElementById('mainContent');
     const logoutButton = document.getElementById('logoutButton');
     const notification = document.getElementById('notification');
-    const powerButton = document.getElementById('powerButton');
+    const openButton = document.getElementById('openButton');
+    const closeButton = document.getElementById('closeButton');
 
     loginForm.addEventListener('submit', function (event) {
         event.preventDefault();
@@ -70,28 +71,40 @@
         checkLoginStatus();
     });
 
-    // Funcionalidade do botão de energia
-
-    powerButton.addEventListener('click', () => {
-        // Faz uma requisição HTTP para o servidor quando o botão for clicado
-        fetch('https://esp32api-production.up.railway.app/event/pulse', {
+    openButton.addEventListener('click', function () {
+        fetch('https://esp32api-production.up.railway.app/event/open', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
-        })
-            .then(response => {
-                if (response.ok) {
-                    showNotification('Comando enviado com sucesso!', 'success');
-                } else {
-                    showNotification('Erro ao enviar comando!', 'error');
-                }
-            })
-            .catch(error => {
-                // Se houver um erro de rede
-                showNotification('Falha na conexão!', 'error');
-                console.error('Erro:', error);
-            });
+        }).then(response => {
+            if (response.ok) {
+                showNotification('Portão abrindo...', 'success');
+            } else {
+                showNotification('Erro ao abrir o portão!', 'error');
+            }
+        }).catch(error => {
+            showNotification('Falha na conexão!', 'error');
+            console.error('Erro:', error);
+        });
+    });
+
+    closeButton.addEventListener('click', function () {
+        fetch('https://esp32api-production.up.railway.app/event/close', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            if (response.ok) {
+                showNotification('Portão fechando...', 'success');
+            } else {
+                showNotification('Erro ao fechar o portão!', 'error');
+            }
+        }).catch(error => {
+            showNotification('Falha na conexão!', 'error');
+            console.error('Erro:', error);
+        });
     });
 
     // Atualizar o valor exibido do slider e da caixa de entrada
