@@ -13,10 +13,10 @@ app.use(bodyParser.urlencoded({extended: false}));
 let clients = [];
 
 const pool = new Pool({
-  user: 'postgres',
-  host: 'junction.proxy.rlwy.net',
-  database: 'railway',
-  password: 'clHyahvXXtujBGXGqmCZbNunPaNXDrUz',
+  user: 'user do bd',
+  host: 'ip do host',
+  database: 'nome_database',
+  password: 'senhabd',
   port: 52114, // Porta padrão do PostgreSQL
 });
 
